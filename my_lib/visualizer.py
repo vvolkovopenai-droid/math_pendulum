@@ -4,13 +4,14 @@ from my_lib.constants import (TRAJECTORY_LENGTH, CIRCLE_COLOR, CIRCLE_RADIUS,
                               LINE_THICKNESS, TEXT_X_DISTANCE,
                               TEXT_Y_DISTANCE, TEXT_PERIOD_SIZE, TEXT_PERIOD_COLOR, TEXT_PERIOD_THICKNESS,
                               TEXT_COORDINATES_SCALE, TEXT_COORDINATES_THICKNESS, TEXT_COORDINATES_COLOR,
-                              LINE_COORDINATES_COLOR, X_POSITION_PERIOD, Y_POSITION_PERIOD)
+                              LINE_COORDINATES_COLOR, X_POSITION_PERIOD, Y_POSITION_PERIOD, DRAW_TRAJECTORY,
+                              CIRCLE_INSIDE)
 
 
 class Drawer:
 
-    def __init__(self, draw_trajectory: bool = True):
-        self.draw_trajectory = draw_trajectory
+    def __init__(self):
+        self.draw_trajectory = DRAW_TRAJECTORY
         self.trajectory = []  # список точек для линии
         self.font = cv2.FONT_HERSHEY_SIMPLEX
 
@@ -21,7 +22,7 @@ class Drawer:
             (x, y),
             CIRCLE_RADIUS,
             CIRCLE_COLOR,
-            -1  # залитый круг
+            CIRCLE_INSIDE  # залитый круг
         )
 
     def draw_trajectory_line(self, frame) :
@@ -50,12 +51,11 @@ class Drawer:
         if self.draw_trajectory:
             self.trajectory.append(center)
             if len(self.trajectory) > TRAJECTORY_LENGTH:
-                self.trajectory.pop(0)
+                self.trajectory.pop(0) #удаляет первый элемент
 
     def draw(self, frame, center):
         self.draw_point(frame, center)
         self.draw_coordinates_text(frame, center)
-
         if self.draw_trajectory:
             self.draw_trajectory_line(frame)
 
@@ -65,7 +65,7 @@ class Drawer:
             f"Period: {period:.3f} s",
             (X_POSITION_PERIOD, Y_POSITION_PERIOD),
             self.font,
-            TEXT_PERIOD_SIZE,  # размер
+            TEXT_PERIOD_SIZE,
             TEXT_PERIOD_COLOR,
-            TEXT_PERIOD_THICKNESS  # толщина
+            TEXT_PERIOD_THICKNESS
         )

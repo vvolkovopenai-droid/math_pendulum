@@ -9,7 +9,7 @@ class BallTracker:
     def __init__(self):
         self.fgbg = cv2.createBackgroundSubtractorMOG2(
             history=MOG2_HISTORY, # последние MOG2_HISTORY кадров, чтобы лучше понимать, что такое фон
-        varThreshold=MOG2_VAR_THRESHOLD, # чувствительность
+            varThreshold=MOG2_VAR_THRESHOLD, # чувствительность
             detectShadows=MOG2_DETECT_SHADOWS
         )
 

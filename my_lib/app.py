@@ -1,8 +1,7 @@
 import cv2
 
 from my_lib.constants import (DEFAULT_FPS, WINDOW_NAME, WAIT_KEY_DELAY,
-                              ESC_KEY_CODE, VIDEO_PATH, AMOUNT_OF_DATA_REQUIRED_TO_CALCULATE_THE_PERIOD,
-                              DRAW_TRAJECTORY)
+                              ESC_KEY_CODE, AMOUNT_OF_DATA_REQUIRED_TO_CALCULATE_THE_PERIOD, VIDEO_PATH)
 from my_lib.tracker import BallTracker
 from my_lib.calculator import calculate_period
 from my_lib.visualizer import Drawer
@@ -10,24 +9,21 @@ from my_lib.visualizer import Drawer
 
 class PendulumTrackerApp:
 
-    def __init__(self, video_path):
-        self.draw_trajectory = DRAW_TRAJECTORY
-        self.video_path = video_path
-        self.cap = None
+    def __init__(self):
+        self.video_path = VIDEO_PATH
+        self.cap = None # переменная capture для захвата видео
         self.fps = DEFAULT_FPS
         self.total_frames = 0
         self.frame_num = 0
-
-        # Инициализация компонентов
         self.tracker = BallTracker()
-        self.drawer = Drawer(self.draw_trajectory)
+        self.drawer = Drawer()
 
         # Хранилища данных
-        self.timestamps = []
+        self.timestamps = [] # время каждого кадра в секундах
         self.x_vals = []
         self.y_vals = []
 
-    def open_video(self) -> bool:
+    def open_video(self):
         print(f"Попытка открыть видео: {self.video_path}")
         self.cap = cv2.VideoCapture(self.video_path)
 
@@ -93,7 +89,6 @@ class PendulumTrackerApp:
                     self.x_vals, self.y_vals, self.timestamps, self.fps
                 )
                 self.drawer.draw_period_text(frame, current_period)
-                # self.drawer.draw_info(frame, self.frame_num, len(self.x_vals))
 
             cv2.imshow(WINDOW_NAME, frame)
 

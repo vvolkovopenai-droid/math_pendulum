@@ -18,6 +18,7 @@ WHITE = (255, 255, 255)
 TRAJECTORY_LENGTH = 50
 CIRCLE_COLOR = RED  # красный
 CIRCLE_RADIUS = 4
+CIRCLE_INSIDE = -1 # залитый круг
 LINE_COORDINATES_COLOR = GREEN    # зелёный
 LINE_THICKNESS = 1
 TEXT_PERIOD_COLOR = WHITE  # белый
@@ -43,4 +44,4 @@ ESC_KEY_CODE = 27
 
 
 # Путь к видео
-VIDEO_PATH = "source/videos/object2.mp4"
+VIDEO_PATH = "source/videos/object.mp4"
