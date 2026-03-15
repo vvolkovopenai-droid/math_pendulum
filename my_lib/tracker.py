@@ -1,6 +1,4 @@
 import cv2
-import numpy as np
-from typing import Optional, Tuple
 
 from my_lib.constants import (MOG2_HISTORY, MOG2_VAR_THRESHOLD, MOG2_DETECT_SHADOWS,
                               MORPH_KERNEL_SIZE, MIN_CONTOUR_AREA)
@@ -22,12 +20,12 @@ class BallTracker:
 
         self.min_area = MIN_CONTOUR_AREA # не считать шарики размером меньше MIN_CONTOUR_AREA пикселей
 
-    def preprocess_mask(self, fgmask: np.ndarray) -> np.ndarray:
+    def preprocess_mask(self, fgmask):
         mask = cv2.erode(fgmask, self.kernel, iterations=1)
         mask = cv2.dilate(mask, self.kernel, iterations=2)
         return mask
 
-    def find_largest_contour(self, mask: np.ndarray) -> Optional[np.ndarray]:
+    def find_largest_contour(self, mask):
         contours, _ = cv2.findContours(
             mask,
             cv2.RETR_EXTERNAL,
@@ -42,7 +40,7 @@ class BallTracker:
 
         return largest
 
-    def get_contour_center(self, contour: np.ndarray) -> Optional[Tuple[int, int]]:
+    def get_contour_center(self, contour):
         M = cv2.moments(contour)
         if M["m00"] == 0:
             return None
@@ -51,9 +49,8 @@ class BallTracker:
         cY = int(M["m01"] / M["m00"])
         return (cX, cY)
 
-    def track(self, frame: np.ndarray) -> Optional[Tuple[int, int]]:
+    def track(self, frame):
 
-        # Получаем маску переднего плана
         fgmask = self.fgbg.apply(frame)
 
         fgmask = self.preprocess_mask(fgmask)
@@ -62,6 +59,5 @@ class BallTracker:
         if contour is None:
             return None
 
-        # Вычисляем центр
         center = self.get_contour_center(contour)
         return center

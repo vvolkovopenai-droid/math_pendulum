@@ -1,6 +1,4 @@
 import cv2
-import numpy as np
-from typing import Tuple, List
 
 from my_lib.constants import (TRAJECTORY_LENGTH, CIRCLE_COLOR, CIRCLE_RADIUS,
                               LINE_THICKNESS, TEXT_X_DISTANCE,
@@ -16,8 +14,7 @@ class Drawer:
         self.trajectory = []  # список точек для линии
         self.font = cv2.FONT_HERSHEY_SIMPLEX
 
-    def draw_point(self, frame: np.ndarray, center: Tuple[int, int]) -> None:
-        """Рисует точку в центре объекта."""
+    def draw_point(self, frame, center):
         x, y = center
         cv2.circle(
             frame,
@@ -27,8 +24,7 @@ class Drawer:
             -1  # залитый круг
         )
 
-    def draw_trajectory_line(self, frame: np.ndarray) -> None:
-        """Рисует линию траектории из последних точек."""
+    def draw_trajectory_line(self, frame) :
         for i in range(1, len(self.trajectory)):
             cv2.line(
                 frame,
@@ -38,9 +34,7 @@ class Drawer:
                 LINE_THICKNESS
             )
 
-    def draw_coordinates_text(self, frame: np.ndarray,
-                               center: Tuple[int, int]) -> None:
-        """Рисует текст с координатами рядом с объектом."""
+    def draw_coordinates_text(self, frame, center):
         x, y = center
         cv2.putText(
             frame,
@@ -52,26 +46,20 @@ class Drawer:
             TEXT_COORDINATES_THICKNESS
         )
 
-    def update_trajectory(self, center: Tuple[int, int]) -> None:
-        """Обновляет список точек траектории."""
+    def update_trajectory(self, center):
         if self.draw_trajectory:
             self.trajectory.append(center)
             if len(self.trajectory) > TRAJECTORY_LENGTH:
                 self.trajectory.pop(0)
 
-    def draw(self, frame: np.ndarray, center: Tuple[int, int]) -> None:
-        """
-        Основной метод отрисовки.
-        Рисует точку, координаты и (опционально) линию траектории.
-        """
+    def draw(self, frame, center):
         self.draw_point(frame, center)
         self.draw_coordinates_text(frame, center)
 
         if self.draw_trajectory:
             self.draw_trajectory_line(frame)
 
-    def draw_period_text(self, frame: np.ndarray, period: float) -> None:
-        """Рисует текст с текущим периодом в верхнем левом углу."""
+    def draw_period_text(self, frame, period):
         cv2.putText(
             frame,
             f"Period: {period:.3f} s",
@@ -81,24 +69,3 @@ class Drawer:
             TEXT_PERIOD_COLOR,
             TEXT_PERIOD_THICKNESS  # толщина
         )
-
-    # def draw_info(self, frame: np.ndarray, frame_num: int, points_count: int) -> None:
-    #     """Рисует дополнительную информацию на кадре."""
-    #     cv2.putText(
-    #         frame,
-    #         f"Frame: {frame_num}",
-    #         (20, 70),
-    #         self.font,
-    #         0.7,
-    #         TEXT_COLOR,
-    #         1
-    #     )
-    #     cv2.putText(
-    #         frame,
-    #         f"Points: {points_count}",
-    #         (20, 100),
-    #         self.font,
-    #         0.7,
-    #         TEXT_COLOR,
-    #         1
-    #     )

@@ -1,22 +1,17 @@
 import cv2
-import numpy as np
-from typing import Optional
 
 from my_lib.constants import (DEFAULT_FPS, WINDOW_NAME, WAIT_KEY_DELAY,
-                              ESC_KEY_CODE, VIDEO_PATH, AMOUNT_OF_DATA_REQUIRED_TO_CALCULATE_THE_PERIOD)
+                              ESC_KEY_CODE, VIDEO_PATH, AMOUNT_OF_DATA_REQUIRED_TO_CALCULATE_THE_PERIOD,
+                              DRAW_TRAJECTORY)
 from my_lib.tracker import BallTracker
 from my_lib.calculator import calculate_period
 from my_lib.visualizer import Drawer
 
 
 class PendulumTrackerApp:
-    """
-    Главный класс приложения.
-    Координирует работу всех компонентов.
-    """
 
-    def __init__(self, video_path: str, draw_trajectory: bool = True):
-
+    def __init__(self, video_path):
+        self.draw_trajectory = DRAW_TRAJECTORY
         self.video_path = video_path
         self.cap = None
         self.fps = DEFAULT_FPS
@@ -25,7 +20,7 @@ class PendulumTrackerApp:
 
         # Инициализация компонентов
         self.tracker = BallTracker()
-        self.drawer = Drawer(draw_trajectory)
+        self.drawer = Drawer(self.draw_trajectory)
 
         # Хранилища данных
         self.timestamps = []
@@ -53,8 +48,7 @@ class PendulumTrackerApp:
 
         return True
 
-    def process_frame(self, frame: np.ndarray) -> None:
-        """Обрабатывает один кадр."""
+    def process_frame(self, frame):
         current_time = self.frame_num / self.fps
 
         center = self.tracker.track(frame)
@@ -69,19 +63,16 @@ class PendulumTrackerApp:
             self.drawer.update_trajectory(center)
             self.drawer.draw(frame, center)
 
-    def handle_exit_key(self, key: int) -> bool:
-        """Обрабатывает нажатие клавиш выхода."""
+    def handle_exit_key(self, key) :
+
+        if cv2.getWindowProperty(WINDOW_NAME, cv2.WND_PROP_VISIBLE) < 1:
+            return True
         if key == ESC_KEY_CODE:
             return True
         return False
 
-    def run(self) -> Optional[float]:
-        """
-        Запускает основной цикл обработки видео.
+    def run(self):
 
-        Возвращает:
-            Рассчитанный период или None в случае ошибки
-        """
         if not self.open_video():
             return None
 
@@ -95,13 +86,8 @@ class PendulumTrackerApp:
 
             self.frame_num += 1
 
-            # # Показываем прогресс каждые 50 кадров
-            # if self.frame_num % 50 == 0:
-            #     print(f"Обработано {self.frame_num} / {self.total_frames} кадров, найдено точек: {len(self.x_vals)}")
-
             self.process_frame(frame)
 
-            # Показываем текущий период на кадре
             if len(self.x_vals) > 0:
                 current_period = calculate_period(
                     self.x_vals, self.y_vals, self.timestamps, self.fps
@@ -126,10 +112,17 @@ class PendulumTrackerApp:
             print("Слишком мало данных для расчёта периода.")
             return None
 
-        # Финальный расчёт периода
         period = calculate_period(self.x_vals,
                                   self.y_vals,
                                   self.timestamps,
                                   self.fps)
+
+        if period is not None and period > 0:
+            print(f" ИТОГОВЫЙ ПЕРИОД КОЛЕБАНИЙ: {period:.3f} сек")
+        elif period == 0.0:
+            print("Не удалось рассчитать период (недостаточно пересечений нуля).")
+        else:
+            print("Не удалось рассчитать период.")
+
 
         return period

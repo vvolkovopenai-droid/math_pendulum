@@ -1,5 +1,3 @@
-# Константы и настройки
-
 # Параметры видео по умолчанию
 DEFAULT_FPS = 30.0
 
@@ -32,6 +30,7 @@ TEXT_PERIOD_SIZE = 1
 TEXT_PERIOD_THICKNESS = 2
 X_POSITION_PERIOD = 20
 Y_POSITION_PERIOD = 40
+DRAW_TRAJECTORY = True # Рисовать ли траекторию?
 
 # Данные
 THE_AMOUNT_OF_DATA_REQUIRED_FOR_ANALYSIS = 2
@@ -44,4 +43,4 @@ ESC_KEY_CODE = 27
 
 
 # Путь к видео
-VIDEO_PATH = "source/videos/object.mp4"
+VIDEO_PATH = "source/videos/object2.mp4"
